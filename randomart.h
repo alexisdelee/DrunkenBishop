@@ -30,6 +30,7 @@ typedef struct
 
 Board *generate_board(int, int);
 int *parse_partial_fingerprint(const char *);
+int *move_into_board(int *, Board *, int, int);
 void display_board(Board *);
 void free_board(Board *);
 

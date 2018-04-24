@@ -70,12 +70,50 @@ int *parse_partial_fingerprint(const char *fingerprint)
     return _partial;
 }
 
+int *move_into_board(int *_partial, Board *board, int x, int y)
+{
+    static int _coords[2];
+    int i, _x = x, _y = y;
+
+    for(i = 0; i < 4; i++) {
+        if(_partial[i] & 2) { // SOUTH
+            if(board->field[y][x].directions & SOUTH) {
+                _y++;
+            }
+        } else { // NORTH
+            if(board->field[y][x].directions & NORTH) {
+                _y--;
+            }
+        }
+
+        if(_partial[i] & 1) { // EAST
+            if(board->field[y][x].directions & EAST) {
+                _x++;
+            }
+        } else { // WEST
+            if(board->field[y][x].directions & WEST) {
+                _x--;
+            }
+        }
+
+        x = _x;
+        y = _y;
+
+        board->field[y][x].iterations++;
+    }
+
+    _coords[0] = x;
+    _coords[1] = y;
+
+    return _coords;
+}
+
 void display_board(Board *board)
 {
     const char *symbols = " .o+=*B0X@%&#/^";
     int x, y;
 
-    printf("+----[RSA1024]----+\n");
+    printf("+----[       ]----+\n");
 
     for(y = 0; y < board->rows; y++) {
         printf("|");
@@ -98,8 +136,6 @@ void display_board(Board *board)
 
 void free_board(Board *board)
 {
-    printf("ok1\n");
-
     if(board) {
         if(board->field) {
             int y;
@@ -109,13 +145,9 @@ void free_board(Board *board)
                 }
             }
 
-            printf("nok2\n");
             free(board->field);
-            printf("nok3\n");
         }
 
-        printf("ok\n");
         free(board);
-        printf("nok\n");
     }
 }
